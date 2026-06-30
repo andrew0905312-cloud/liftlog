@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#111827" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="LiftLog" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="stylesheet" href="style.css" />
+  <title>LiftLog</title>
+</head>
+<body>
+  <main class="app-shell">
+    <header class="hero">
+      <p class="eyebrow">Workout Tracker</p>
+      <h1>LiftLog</h1>
+      <p class="subtitle">Track sets, PRs, weekly volume and progress from your iPhone.</p>
+    </header>
+
+    <section class="card">
+      <div class="section-title">
+        <h2>Add set</h2>
+        <span id="todayBadge" class="badge"></span>
+      </div>
+
+      <form id="setForm" class="form-grid">
+        <label>
+          Exercise
+          <select id="exerciseSelect"></select>
+        </label>
+
+        <label>
+          New exercise <span class="muted">optional</span>
+          <input id="customExercise" type="text" placeholder="e.g. Hack Squat" autocomplete="off" />
+        </label>
+
+        <div class="number-grid">
+          <label>
+            Weight
+            <input id="weightInput" type="number" min="0" step="0.5" placeholder="kg" required />
+          </label>
+
+          <label>
+            Reps
+            <input id="repsInput" type="number" min="1" step="1" placeholder="reps" required />
+          </label>
+
+          <label>
+            RIR
+            <input id="rirInput" type="number" min="0" max="10" step="1" placeholder="0-4" />
+          </label>
+        </div>
+
+        <label>
+          Notes <span class="muted">optional</span>
+          <input id="notesInput" type="text" placeholder="e.g. paused reps, belt, pain-free" autocomplete="off" />
+        </label>
+
+        <button type="submit" class="primary-button">Save set</button>
+      </form>
+    </section>
+
+    <section id="stats" class="stats-grid"></section>
+
+    <section class="card">
+      <div class="section-title">
+        <h2>Today</h2>
+        <span id="todayCount" class="badge"></span>
+      </div>
+      <div id="todayList" class="list"></div>
+    </section>
+
+    <section class="card">
+      <div class="section-title stacked">
+        <div>
+          <h2>History</h2>
+          <p class="muted">Filter by exercise, delete mistakes, or export a backup.</p>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <select id="filterExercise"></select>
+        <button id="exportBtn" type="button" class="secondary-button">Export JSON</button>
+        <label class="secondary-button import-label">
+          Import JSON
+          <input id="importFile" type="file" accept="application/json,.json" hidden />
+        </label>
+      </div>
+
+      <div id="historyList" class="list"></div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

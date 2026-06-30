@@ -1,0 +1,10 @@
+{
+  "name": "LiftLog Workout Tracker",
+  "short_name": "LiftLog",
+  "description": "Track workouts, sets, volume and estimated PRs.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0b1020",
+  "theme_color": "#111827"
+}
