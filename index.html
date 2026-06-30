@@ -24,6 +24,7 @@
       <a href="#routines">Routines</a>
       <a href="#progress">Progress</a>
       <a href="#history">History</a>
+      <a href="#nutrition">Nutrition</a>
     </nav>
 
     <section id="log" class="card">
@@ -97,6 +98,40 @@
     </section>
 
     <section id="stats" class="stats-grid"></section>
+
+    <section id="nutrition" class="card">
+      <div class="section-title">
+        <div>
+          <h2>Nutrition</h2>
+          <p class="muted">Daily meal-plan check-ins from Sunday to Thursday.</p>
+        </div>
+        <span id="nutritionBadge" class="badge"></span>
+      </div>
+
+      <div id="nutritionOverview" class="stats-grid nutrition-stats"></div>
+
+      <div class="toolbar nutrition-toolbar">
+        <button id="checkAllNutritionBtn" type="button" class="primary-button">Mark today complete</button>
+        <button id="clearNutritionBtn" type="button" class="secondary-button">Clear today</button>
+      </div>
+
+      <div id="nutritionMeals" class="nutrition-meals"></div>
+
+      <div class="nutrition-week-panel">
+        <div class="section-title stacked small-title">
+          <div>
+            <h3>Sunday–Thursday overview</h3>
+            <p class="muted">Your plan runs for five days. Friday and Saturday are outside this meal plan.</p>
+          </div>
+        </div>
+        <div id="nutritionWeek" class="nutrition-week-grid"></div>
+      </div>
+
+      <label class="nutrition-notes-label">
+        Nutrition notes <span class="muted">optional</span>
+        <textarea id="nutritionNotes" rows="3" placeholder="e.g. used oil, swapped fruit, felt hungry, missed snack"></textarea>
+      </label>
+    </section>
 
     <section id="routines" class="card">
       <div class="section-title stacked">

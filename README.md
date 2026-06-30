@@ -1,22 +1,26 @@
-# LiftLog Workout Tracker v2
+# LiftLog v3
 
-A static workout tracker for iPhone using HTML, CSS and JavaScript.
+Workout tracker + nutrition check-ins for a five-day meal plan.
 
-## New in v2
+## Includes
 
-- Saved routines
-- Better history grouped by date and exercise
-- Weekly metrics
-- PR board per exercise
-- Progress charts
-- 1RM calculator with percentage table
-- Export/import backups with sets, routines and exercise metadata
+- Workout logging: exercise, weight, reps, RIR and notes.
+- Saved routines.
+- History grouped by date and exercise.
+- Progress dashboard with PRs, weekly metrics, charts and 1RM calculator.
+- Nutrition tab for the Sunday–Thursday meal plan.
+- Daily checkboxes for breakfast, snack, lunch and dinner.
+- Weekly nutrition overview and notes.
+- JSON export/import backup with workouts, routines and nutrition data.
 
-## Deploy
+## Update instructions
 
-Replace the files in your GitHub repository with these files and push to `main`.
-Then GitHub Pages will update automatically.
+Replace your current project files with these files, then run:
 
-## Data
+```bash
+git add .
+git commit -m "Add nutrition meal plan checks"
+git push
+```
 
-Your workout data is stored locally in the browser using localStorage. Export JSON regularly as a backup.
+If your iPhone still shows the old app, open the GitHub Pages URL with `?v=3`, then remove and re-add the Home Screen icon if needed.

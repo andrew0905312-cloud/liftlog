@@ -1,6 +1,7 @@
 const SETS_KEY = "liftlog_sets_v1";
 const ROUTINES_KEY = "liftlog_routines_v1";
 const EXERCISE_META_KEY = "liftlog_exercise_meta_v1";
+const NUTRITION_KEY = "liftlog_nutrition_v1";
 
 const EXERCISE_DATABASE = [
   { name: "Bench Press", muscle: "Chest", category: "Compound" },
@@ -23,9 +24,110 @@ const DEFAULT_ROUTINES = [
   { id: "routine-legs", name: "Leg Day", exercises: ["Squat", "Leg Press", "Romanian Deadlift"] }
 ];
 
+
+const DAILY_MEAL_ITEMS = [
+  {
+    id: "breakfast",
+    name: "Breakfast · Gallo pinto",
+    items: [
+      { id: "breakfast-rice", name: "Cooked white rice", amount: "250 g" },
+      { id: "breakfast-beans", name: "Cooked beans", amount: "100 g" },
+      { id: "breakfast-eggs", name: "Jumbo eggs", amount: "2 units" }
+    ]
+  },
+  {
+    id: "snack",
+    name: "Snack · Protein yogurt",
+    items: [
+      { id: "snack-yogurt", name: "0% Greek yogurt", amount: "150 g" },
+      { id: "snack-whey", name: "Whey protein", amount: "15 g" },
+      { id: "snack-fruit", name: "Mixed fruit", amount: "300 g" }
+    ]
+  },
+  {
+    id: "lunch",
+    name: "Lunch · Chicken, rice and beans",
+    items: [
+      { id: "lunch-chicken", name: "Cooked chicken breast", amount: "125 g" },
+      { id: "lunch-rice", name: "Cooked white rice", amount: "300 g" },
+      { id: "lunch-beans", name: "Cooked beans", amount: "100 g" }
+    ]
+  },
+  {
+    id: "dinner",
+    name: "Dinner · Tilapia, rice and fruit",
+    items: [
+      { id: "dinner-tilapia", name: "Cooked tilapia", amount: "110 g" },
+      { id: "dinner-rice", name: "Cooked white rice", amount: "135 g" },
+      { id: "dinner-fruit", name: "Mixed fruit", amount: "150 g" }
+    ]
+  }
+];
+
+const NUTRITION_DAYS = [
+  {
+    dayNumber: 1,
+    weekday: "Sunday",
+    recipes: {
+      breakfast: "Classic gallo pinto with eggs: rice + beans with salt, pepper, garlic powder, onion powder and cilantro. Add 2 jumbo eggs.",
+      snack: "Protein yogurt with fruit: Greek yogurt + whey until creamy. Add fruit on top.",
+      lunch: "Lemon chicken: chicken breast with lemon, garlic, salt and pepper. Serve with rice and beans.",
+      dinner: "Paprika tilapia: tilapia with paprika, lemon, salt and pepper. Serve with rice and fruit."
+    }
+  },
+  {
+    dayNumber: 2,
+    weekday: "Monday",
+    recipes: {
+      breakfast: "Gallo pinto bowl: rice + beans, then mix in 2 scrambled jumbo eggs.",
+      snack: "Cold yogurt bowl: Greek yogurt + whey + fruit, chilled for a thicker texture.",
+      lunch: "Fajita-style chicken: chicken strips with paprika, cumin, garlic, pepper and lemon. Serve with rice and beans.",
+      dinner: "Mild curry tilapia: tilapia with curry powder, garlic, salt, pepper and lemon. Serve with rice and fruit."
+    }
+  },
+  {
+    dayNumber: 3,
+    weekday: "Tuesday",
+    recipes: {
+      breakfast: "Gallo pinto with omelette: rice + beans, with a 2-egg omelette on the side.",
+      snack: "Thick yogurt smoothie: blend or mix yogurt, whey and part of the fruit. Use the rest as topping.",
+      lunch: "Shredded chicken: chicken with garlic, lemon, salt, pepper and optional chili. Serve with rice and beans.",
+      dinner: "Lemon tilapia: tilapia with plenty of lemon, garlic, salt and pepper. Serve with rice and fruit."
+    }
+  },
+  {
+    dayNumber: 4,
+    weekday: "Wednesday",
+    recipes: {
+      breakfast: "Breakfast bowl: rice + beans in a bowl, topped with 2 scrambled jumbo eggs. Optional cilantro, chili or a little Lizano.",
+      snack: "Frozen-fruit yogurt: Greek yogurt + whey with cold or frozen fruit for a dessert-like texture.",
+      lunch: "Dry BBQ-style chicken: chicken with paprika, garlic, pepper, cumin and a pinch of salt. Serve with rice and beans.",
+      dinner: "Shredded tilapia with rice: mix tilapia with rice, lemon, garlic, salt, pepper and cilantro. Add fruit."
+    }
+  },
+  {
+    dayNumber: 5,
+    weekday: "Thursday",
+    recipes: {
+      breakfast: "Gallo pinto with boiled eggs: rice + beans with 2 boiled jumbo eggs, whole or chopped on top.",
+      snack: "Dessert-style protein yogurt: Greek yogurt + whey until creamy, with fruit on top.",
+      lunch: "Chicken with creamy beans: chicken and rice, with the beans slightly mashed for a creamier texture.",
+      dinner: "Garlic-pepper tilapia: tilapia with garlic, black pepper, salt and lemon. Serve with rice and fruit."
+    }
+  }
+];
+
+const DAILY_NUTRITION_TARGET = {
+  calories: "≈2100 kcal",
+  protein: "150–152 g protein",
+  totalItems: DAILY_MEAL_ITEMS.reduce((sum, meal) => sum + meal.items.length, 0)
+};
+
+
 let exerciseMeta = loadObject(EXERCISE_META_KEY);
 let sets = loadArray(SETS_KEY).map(cleanSet).filter(Boolean);
 let routines = loadArray(ROUTINES_KEY);
+let nutrition = normalizeNutrition(loadObject(NUTRITION_KEY));
 
 if (routines.length === 0) {
   routines = DEFAULT_ROUTINES;
@@ -67,7 +169,14 @@ const els = {
   calcWeight: document.getElementById("calcWeight"),
   calcReps: document.getElementById("calcReps"),
   oneRmResult: document.getElementById("oneRmResult"),
-  percentageTable: document.getElementById("percentageTable")
+  percentageTable: document.getElementById("percentageTable"),
+  nutritionBadge: document.getElementById("nutritionBadge"),
+  nutritionOverview: document.getElementById("nutritionOverview"),
+  nutritionMeals: document.getElementById("nutritionMeals"),
+  nutritionWeek: document.getElementById("nutritionWeek"),
+  nutritionNotes: document.getElementById("nutritionNotes"),
+  checkAllNutritionBtn: document.getElementById("checkAllNutritionBtn"),
+  clearNutritionBtn: document.getElementById("clearNutritionBtn")
 };
 
 function loadArray(key) {
@@ -98,6 +207,10 @@ function saveRoutines() {
 
 function saveExerciseMeta() {
   localStorage.setItem(EXERCISE_META_KEY, JSON.stringify(exerciseMeta));
+}
+
+function saveNutrition() {
+  localStorage.setItem(NUTRITION_KEY, JSON.stringify(nutrition));
 }
 
 function uid(prefix = "id") {
@@ -292,6 +405,184 @@ function renderRoutines() {
       </div>
     </article>
   `).join("");
+}
+
+
+function normalizeNutrition(value) {
+  const normalized = value && typeof value === "object" && !Array.isArray(value)
+    ? value
+    : {};
+  if (!normalized.days || typeof normalized.days !== "object" || Array.isArray(normalized.days)) {
+    normalized.days = {};
+  }
+  return normalized;
+}
+
+function getNutritionDay(date = new Date()) {
+  const dayIndex = date.getDay(); // 0 Sunday, 1 Monday, ... 4 Thursday
+  if (dayIndex < 0 || dayIndex > 4) return null;
+  return NUTRITION_DAYS[dayIndex];
+}
+
+function getNutritionDateString(date = new Date()) {
+  return localDateString(date);
+}
+
+function getNutritionRecord(dateString = getNutritionDateString()) {
+  if (!nutrition.days[dateString]) {
+    nutrition.days[dateString] = { checkedItems: {}, notes: "" };
+  }
+  if (!nutrition.days[dateString].checkedItems || typeof nutrition.days[dateString].checkedItems !== "object") {
+    nutrition.days[dateString].checkedItems = {};
+  }
+  if (typeof nutrition.days[dateString].notes !== "string") nutrition.days[dateString].notes = "";
+  return nutrition.days[dateString];
+}
+
+function getNutritionItemIds() {
+  return DAILY_MEAL_ITEMS.flatMap(meal => meal.items.map(item => `${meal.id}:${item.id}`));
+}
+
+function getNutritionCompletion(dateString = getNutritionDateString()) {
+  const record = getNutritionRecord(dateString);
+  const itemIds = getNutritionItemIds();
+  const checked = itemIds.filter(id => record.checkedItems[id]).length;
+  const total = itemIds.length;
+  return {
+    checked,
+    total,
+    percent: total ? Math.round((checked / total) * 100) : 0
+  };
+}
+
+function getCurrentNutritionWeekDates(date = new Date()) {
+  const start = new Date(date.getFullYear(), date.getMonth(), date.getDate() - date.getDay());
+  return Array.from({ length: 5 }, (_, index) => {
+    const next = new Date(start);
+    next.setDate(start.getDate() + index);
+    return next;
+  });
+}
+
+function renderNutrition() {
+  const today = new Date();
+  const dateString = getNutritionDateString(today);
+  const planDay = getNutritionDay(today);
+  const record = getNutritionRecord(dateString);
+  const completion = getNutritionCompletion(dateString);
+
+  els.nutritionBadge.textContent = planDay
+    ? `${planDay.weekday} · Day ${planDay.dayNumber}`
+    : "Off plan day";
+
+  const weekDates = getCurrentNutritionWeekDates(today);
+  const weekCompletions = weekDates.map(date => getNutritionCompletion(localDateString(date)));
+  const weekChecked = weekCompletions.reduce((sum, item) => sum + item.checked, 0);
+  const weekTotal = weekCompletions.reduce((sum, item) => sum + item.total, 0);
+  const mealsComplete = DAILY_MEAL_ITEMS.filter(meal => {
+    return meal.items.every(item => record.checkedItems[`${meal.id}:${item.id}`]);
+  }).length;
+
+  els.nutritionOverview.innerHTML = [
+    { label: "Today", value: `${completion.percent}%`, extra: `${completion.checked}/${completion.total} checks` },
+    { label: "Meals complete", value: `${mealsComplete}/4`, extra: "breakfast, snack, lunch, dinner" },
+    { label: "Daily target", value: DAILY_NUTRITION_TARGET.calories, extra: DAILY_NUTRITION_TARGET.protein },
+    { label: "Plan week", value: `${weekTotal ? Math.round((weekChecked / weekTotal) * 100) : 0}%`, extra: `${weekChecked}/${weekTotal} checks · Sun–Thu` }
+  ].map(card => `
+    <article class="stat-card">
+      <div class="stat-label">${escapeHTML(card.label)}</div>
+      <div class="stat-value">${escapeHTML(card.value)}</div>
+      <div class="stat-extra">${escapeHTML(card.extra)}</div>
+    </article>
+  `).join("");
+
+  if (!planDay) {
+    els.nutritionMeals.innerHTML = `
+      <div class="off-plan-card">
+        <strong>Friday/Saturday are outside this 5-day plan.</strong><br>
+        Use this tab again on Sunday, or use the notes box below to record a free meal-plan note.
+      </div>
+    `;
+  } else {
+    els.nutritionMeals.innerHTML = DAILY_MEAL_ITEMS.map(meal => renderNutritionMeal(meal, planDay, record)).join("");
+  }
+
+  els.nutritionWeek.innerHTML = weekDates.map((date, index) => {
+    const day = NUTRITION_DAYS[index];
+    const ds = localDateString(date);
+    const done = getNutritionCompletion(ds);
+    const isToday = ds === dateString;
+    return `
+      <article class="nutrition-day-card${isToday ? " today" : ""}">
+        <div class="nutrition-day-name">${escapeHTML(day.weekday)}</div>
+        <div class="nutrition-day-date">Day ${day.dayNumber} · ${escapeHTML(formatShortDate(ds))}</div>
+        <div class="nutrition-day-progress">${done.percent}% · ${done.checked}/${done.total}</div>
+        <div class="bar"><span style="width:${Math.max(4, done.percent)}%"></span></div>
+      </article>
+    `;
+  }).join("");
+
+  els.nutritionNotes.value = record.notes || "";
+}
+
+function renderNutritionMeal(meal, planDay, record) {
+  const checkedCount = meal.items.filter(item => record.checkedItems[`${meal.id}:${item.id}`]).length;
+  return `
+    <article class="nutrition-meal-card">
+      <header class="nutrition-meal-header">
+        <div>
+          <div class="nutrition-meal-title">${escapeHTML(meal.name)}</div>
+          <div class="nutrition-recipe">${escapeHTML(planDay.recipes[meal.id])}</div>
+        </div>
+        <span class="mini-badge">${checkedCount}/${meal.items.length}</span>
+      </header>
+      <div class="nutrition-check-list">
+        ${meal.items.map(item => {
+          const key = `${meal.id}:${item.id}`;
+          const checked = record.checkedItems[key] ? "checked" : "";
+          return `
+            <label class="nutrition-check-row">
+              <input type="checkbox" data-nutrition-item="${escapeHTML(key)}" ${checked} />
+              <span class="nutrition-item-name">${escapeHTML(item.name)}</span>
+              <span class="nutrition-item-amount">${escapeHTML(item.amount)}</span>
+            </label>
+          `;
+        }).join("")}
+      </div>
+    </article>
+  `;
+}
+
+function updateNutritionCheck(key, checked) {
+  const dateString = getNutritionDateString();
+  const record = getNutritionRecord(dateString);
+  record.checkedItems[key] = Boolean(checked);
+  saveNutrition();
+  renderNutrition();
+}
+
+function markTodayNutritionComplete() {
+  const record = getNutritionRecord(getNutritionDateString());
+  getNutritionItemIds().forEach(id => {
+    record.checkedItems[id] = true;
+  });
+  saveNutrition();
+  renderNutrition();
+}
+
+function clearTodayNutrition() {
+  const confirmed = confirm("Clear all nutrition checks for today?");
+  if (!confirmed) return;
+  const record = getNutritionRecord(getNutritionDateString());
+  record.checkedItems = {};
+  saveNutrition();
+  renderNutrition();
+}
+
+function saveNutritionNotes() {
+  const record = getNutritionRecord(getNutritionDateString());
+  record.notes = els.nutritionNotes.value;
+  saveNutrition();
 }
 
 function renderWeeklyMetrics() {
@@ -792,11 +1083,12 @@ function deleteSet(id) {
 function exportBackup() {
   const backup = {
     app: "LiftLog",
-    version: 2,
+    version: 3,
     exportedAt: new Date().toISOString(),
     sets,
     routines,
-    exerciseMeta
+    exerciseMeta,
+    nutrition
   };
 
   const blob = new Blob([JSON.stringify(backup, null, 2)], { type: "application/json" });
@@ -819,6 +1111,7 @@ function importBackup(event) {
       const importedSets = Array.isArray(parsed) ? parsed : parsed.sets;
       const importedRoutines = Array.isArray(parsed.routines) ? parsed.routines : [];
       const importedMeta = parsed.exerciseMeta && typeof parsed.exerciseMeta === "object" ? parsed.exerciseMeta : {};
+      const importedNutrition = parsed.nutrition && typeof parsed.nutrition === "object" ? normalizeNutrition(parsed.nutrition) : null;
 
       if (!Array.isArray(importedSets)) throw new Error("Invalid backup file.");
 
@@ -847,6 +1140,13 @@ function importBackup(event) {
       sets = [...sets, ...cleanedSets];
       routines = [...routines, ...cleanedRoutines];
       exerciseMeta = { ...exerciseMeta, ...importedMeta };
+      if (importedNutrition) {
+        nutrition = normalizeNutrition({
+          ...nutrition,
+          days: { ...nutrition.days, ...importedNutrition.days }
+        });
+        saveNutrition();
+      }
       seedExerciseMeta();
       saveSets();
       saveRoutines();
@@ -867,6 +1167,7 @@ function render() {
   renderOptions();
   renderStats();
   renderRoutines();
+  renderNutrition();
   renderWeeklyMetrics();
   renderProgress();
   renderTodayAndHistory();
@@ -892,7 +1193,15 @@ els.exportBtn.addEventListener("click", exportBackup);
 els.importFile.addEventListener("change", importBackup);
 els.calcWeight.addEventListener("input", updateOneRmCalculator);
 els.calcReps.addEventListener("input", updateOneRmCalculator);
+els.checkAllNutritionBtn.addEventListener("click", markTodayNutritionComplete);
+els.clearNutritionBtn.addEventListener("click", clearTodayNutrition);
+els.nutritionNotes.addEventListener("input", saveNutritionNotes);
 window.addEventListener("resize", renderProgress);
+
+document.addEventListener("change", event => {
+  const nutritionInput = event.target.closest("[data-nutrition-item]");
+  if (nutritionInput) updateNutritionCheck(nutritionInput.dataset.nutritionItem, nutritionInput.checked);
+});
 
 document.addEventListener("click", event => {
   const deleteButton = event.target.closest("[data-delete-id]");
