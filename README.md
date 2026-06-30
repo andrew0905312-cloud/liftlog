@@ -1,16 +1,22 @@
-# LiftLog Workout Tracker
+# LiftLog Workout Tracker v2
 
-A simple static workout tracker for iPhone using HTML, CSS and JavaScript.
+A static workout tracker for iPhone using HTML, CSS and JavaScript.
 
-## Features
+## New in v2
 
-- Log exercise sets
-- Track weight, reps, RIR and notes
-- Calculate volume and estimated 1RM
-- View today's sets and full history
-- Export/import JSON backups
-- Installable from iPhone Safari as a web app
+- Saved routines
+- Better history grouped by date and exercise
+- Weekly metrics
+- PR board per exercise
+- Progress charts
+- 1RM calculator with percentage table
+- Export/import backups with sets, routines and exercise metadata
 
 ## Deploy
 
-Upload these files to a GitHub repository and enable GitHub Pages from the main branch, root folder.
+Replace the files in your GitHub repository with these files and push to `main`.
+Then GitHub Pages will update automatically.
+
+## Data
+
+Your workout data is stored locally in the browser using localStorage. Export JSON regularly as a backup.

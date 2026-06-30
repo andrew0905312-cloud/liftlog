@@ -16,25 +16,59 @@
     <header class="hero">
       <p class="eyebrow">Workout Tracker</p>
       <h1>LiftLog</h1>
-      <p class="subtitle">Track sets, PRs, weekly volume and progress from your iPhone.</p>
+      <p class="subtitle">Track routines, sets, PRs, weekly volume and strength progress from your iPhone.</p>
     </header>
 
-    <section class="card">
+    <nav class="quick-nav" aria-label="Main sections">
+      <a href="#log">Log</a>
+      <a href="#routines">Routines</a>
+      <a href="#progress">Progress</a>
+      <a href="#history">History</a>
+    </nav>
+
+    <section id="log" class="card">
       <div class="section-title">
-        <h2>Add set</h2>
+        <div>
+          <h2>Add set</h2>
+          <p class="muted">Register weight, reps, RIR and notes.</p>
+        </div>
         <span id="todayBadge" class="badge"></span>
       </div>
 
       <form id="setForm" class="form-grid">
         <label>
+          Routine <span class="muted">optional</span>
+          <select id="routineSelect"></select>
+        </label>
+
+        <label>
           Exercise
           <select id="exerciseSelect"></select>
         </label>
 
-        <label>
-          New exercise <span class="muted">optional</span>
-          <input id="customExercise" type="text" placeholder="e.g. Hack Squat" autocomplete="off" />
-        </label>
+        <div class="two-grid">
+          <label>
+            New exercise <span class="muted">optional</span>
+            <input id="customExercise" type="text" placeholder="e.g. Hack Squat" autocomplete="off" />
+          </label>
+
+          <label>
+            Muscle for new exercise
+            <select id="muscleSelect">
+              <option>Chest</option>
+              <option>Back</option>
+              <option>Shoulders</option>
+              <option>Quads</option>
+              <option>Hamstrings</option>
+              <option>Glutes</option>
+              <option>Biceps</option>
+              <option>Triceps</option>
+              <option>Core</option>
+              <option>Calves</option>
+              <option>Other</option>
+            </select>
+          </label>
+        </div>
 
         <div class="number-grid">
           <label>
@@ -64,19 +98,106 @@
 
     <section id="stats" class="stats-grid"></section>
 
-    <section class="card">
-      <div class="section-title">
-        <h2>Today</h2>
-        <span id="todayCount" class="badge"></span>
+    <section id="routines" class="card">
+      <div class="section-title stacked">
+        <div>
+          <h2>Saved routines</h2>
+          <p class="muted">Create Push, Pull, Legs, Upper, Lower, or your own split.</p>
+        </div>
       </div>
-      <div id="todayList" class="list"></div>
+
+      <form id="routineForm" class="form-grid compact-form">
+        <label>
+          Routine name
+          <input id="routineName" type="text" placeholder="e.g. Push Day" autocomplete="off" />
+        </label>
+
+        <label>
+          Exercises <span class="muted">one per line</span>
+          <textarea id="routineExercises" rows="5" placeholder="Bench Press&#10;Incline Bench&#10;Lateral Raise&#10;Triceps Pushdown"></textarea>
+        </label>
+
+        <div class="button-row">
+          <button type="submit" class="primary-button">Save routine</button>
+          <button id="clearRoutineForm" type="button" class="secondary-button">Clear</button>
+        </div>
+      </form>
+
+      <div id="routineList" class="routine-grid"></div>
+    </section>
+
+    <section id="weekly" class="card">
+      <div class="section-title stacked">
+        <div>
+          <h2>Weekly metrics</h2>
+          <p class="muted">Rolling last 7 days.</p>
+        </div>
+      </div>
+      <div id="weeklyMetrics" class="insight-grid"></div>
+    </section>
+
+    <section id="progress" class="card">
+      <div class="section-title stacked">
+        <div>
+          <h2>Progress dashboard</h2>
+          <p class="muted">PRs, charts and estimated 1RM by exercise.</p>
+        </div>
+      </div>
+
+      <div class="toolbar progress-toolbar">
+        <select id="progressExercise"></select>
+        <select id="chartMetric">
+          <option value="e1rm">Estimated 1RM</option>
+          <option value="weight">Top weight</option>
+          <option value="volume">Daily volume</option>
+        </select>
+      </div>
+
+      <div id="prBoard" class="pr-grid"></div>
+
+      <div class="chart-wrap">
+        <canvas id="progressChart" width="900" height="380" aria-label="Progress chart"></canvas>
+      </div>
     </section>
 
     <section class="card">
       <div class="section-title stacked">
         <div>
+          <h2>1RM calculator</h2>
+          <p class="muted">Uses the Epley formula: weight × (1 + reps / 30).</p>
+        </div>
+      </div>
+
+      <form id="oneRmForm" class="calculator-grid">
+        <label>
+          Weight
+          <input id="calcWeight" type="number" min="0" step="0.5" placeholder="kg" />
+        </label>
+        <label>
+          Reps
+          <input id="calcReps" type="number" min="1" step="1" placeholder="reps" />
+        </label>
+        <output id="oneRmResult" class="result-box">Estimated 1RM: —</output>
+      </form>
+      <div id="percentageTable" class="percentage-grid"></div>
+    </section>
+
+    <section class="card">
+      <div class="section-title">
+        <div>
+          <h2>Today</h2>
+          <p class="muted">Grouped by exercise.</p>
+        </div>
+        <span id="todayCount" class="badge"></span>
+      </div>
+      <div id="todayList" class="list"></div>
+    </section>
+
+    <section id="history" class="card">
+      <div class="section-title stacked">
+        <div>
           <h2>History</h2>
-          <p class="muted">Filter by exercise, delete mistakes, or export a backup.</p>
+          <p class="muted">Grouped by date, with daily volume and workout summaries.</p>
         </div>
       </div>
 

@@ -1,7 +1,7 @@
 {
   "name": "LiftLog Workout Tracker",
   "short_name": "LiftLog",
-  "description": "Track workouts, sets, volume and estimated PRs.",
+  "description": "Track routines, workouts, sets, volume and estimated PRs.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
