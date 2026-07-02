@@ -578,3 +578,216 @@ canvas { width: 100%; height: 260px; display: block; }
   }
   .nutrition-item-amount { text-align: left; }
 }
+
+
+/* ---------- v4 tabbed interface ---------- */
+html { scroll-behavior: auto; }
+
+body {
+  overflow-x: hidden;
+}
+
+.app-shell {
+  padding: 18px 14px calc(96px + env(safe-area-inset-bottom));
+}
+
+.app-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 18px 4px 14px;
+}
+
+.app-header h1 {
+  font-size: clamp(2rem, 10vw, 3.4rem);
+  margin: 0;
+}
+
+.app-header .eyebrow {
+  margin-bottom: 6px;
+}
+
+.page {
+  display: none;
+  animation: pageIn 180ms ease-out;
+}
+
+.page.active {
+  display: block;
+}
+
+@keyframes pageIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.home-hero {
+  margin-top: 4px;
+}
+
+.home-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin: 14px 0;
+}
+
+.home-action-card {
+  min-height: 150px;
+  padding: 18px;
+  border-radius: 24px;
+  border: 1px solid var(--line);
+  background: linear-gradient(180deg, rgba(255,255,255,0.075), rgba(255,255,255,0.026));
+  color: var(--text);
+  box-shadow: var(--shadow);
+  text-align: left;
+  display: grid;
+  align-content: space-between;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.home-action-card:active {
+  transform: scale(0.985);
+}
+
+.home-icon {
+  width: 44px;
+  height: 44px;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 16px;
+  background: rgba(255,255,255,0.10);
+  font-size: 1.25rem;
+}
+
+.home-title {
+  display: block;
+  font-size: 1.12rem;
+  font-weight: 950;
+  letter-spacing: -0.02em;
+}
+
+.home-subtitle {
+  display: block;
+  color: var(--muted);
+  font-size: 0.86rem;
+  line-height: 1.25;
+}
+
+.home-summary-card {
+  margin-top: 12px;
+}
+
+.bottom-nav {
+  position: fixed;
+  left: 50%;
+  bottom: calc(12px + env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  width: min(720px, calc(100% - 20px));
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+  padding: 8px;
+  z-index: 20;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background: rgba(11,16,32,0.82);
+  backdrop-filter: blur(24px);
+  box-shadow: 0 18px 60px rgba(0,0,0,0.45);
+}
+
+.tab-button {
+  min-height: 54px;
+  border: 0;
+  border-radius: 18px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 900;
+  display: grid;
+  place-items: center;
+  gap: 2px;
+  cursor: pointer;
+  padding: 6px 2px;
+}
+
+.tab-button span {
+  font-size: 1.08rem;
+  line-height: 1;
+}
+
+.tab-button.active {
+  background: linear-gradient(135deg, rgba(56,189,248,0.24), rgba(34,197,94,0.18));
+  color: var(--text);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.10);
+}
+
+.stats-overview .stats-grid {
+  margin-top: 0;
+}
+
+.compact-list .date-card,
+.compact-list .exercise-card,
+.compact-list .set-row {
+  margin-bottom: 8px;
+}
+
+@media (min-width: 860px) {
+  .home-actions {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  .app-header {
+    align-items: flex-start;
+  }
+
+  .home-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .home-action-card {
+    min-height: 136px;
+    padding: 15px;
+  }
+
+  .bottom-nav {
+    width: calc(100% - 16px);
+    gap: 4px;
+    padding: 7px;
+    border-radius: 22px;
+  }
+
+  .tab-button {
+    min-height: 52px;
+    font-size: 0.68rem;
+    border-radius: 16px;
+  }
+}
+
+@media (max-width: 390px) {
+  .home-actions {
+    gap: 10px;
+  }
+
+  .home-action-card {
+    min-height: 124px;
+    padding: 13px;
+  }
+
+  .home-icon {
+    width: 38px;
+    height: 38px;
+  }
+
+  .home-title {
+    font-size: 1rem;
+  }
+
+  .home-subtitle {
+    font-size: 0.78rem;
+  }
+}

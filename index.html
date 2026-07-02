@@ -13,240 +13,303 @@
 </head>
 <body>
   <main class="app-shell">
-    <header class="hero">
-      <p class="eyebrow">Workout Tracker</p>
-      <h1>LiftLog</h1>
-      <p class="subtitle">Track routines, sets, PRs, weekly volume and strength progress from your iPhone.</p>
+    <header class="app-header">
+      <div>
+        <p class="eyebrow">Workout + Nutrition Tracker</p>
+        <h1>LiftLog</h1>
+      </div>
+      <span id="todayBadge" class="badge"></span>
     </header>
 
-    <nav class="quick-nav" aria-label="Main sections">
-      <a href="#log">Log</a>
-      <a href="#routines">Routines</a>
-      <a href="#progress">Progress</a>
-      <a href="#history">History</a>
-      <a href="#nutrition">Nutrition</a>
-    </nav>
-
-    <section id="log" class="card">
-      <div class="section-title">
+    <section id="home" class="page active" data-page="main">
+      <div class="home-hero card">
         <div>
-          <h2>Add set</h2>
-          <p class="muted">Register weight, reps, RIR and notes.</p>
+          <h2>Main</h2>
+          <p class="muted">Choose what you want to track. The app now works in separate tabs instead of one long page.</p>
         </div>
-        <span id="todayBadge" class="badge"></span>
       </div>
 
-      <form id="setForm" class="form-grid">
-        <label>
-          Routine <span class="muted">optional</span>
-          <select id="routineSelect"></select>
-        </label>
-
-        <label>
-          Exercise
-          <select id="exerciseSelect"></select>
-        </label>
-
-        <div class="two-grid">
-          <label>
-            New exercise <span class="muted">optional</span>
-            <input id="customExercise" type="text" placeholder="e.g. Hack Squat" autocomplete="off" />
-          </label>
-
-          <label>
-            Muscle for new exercise
-            <select id="muscleSelect">
-              <option>Chest</option>
-              <option>Back</option>
-              <option>Shoulders</option>
-              <option>Quads</option>
-              <option>Hamstrings</option>
-              <option>Glutes</option>
-              <option>Biceps</option>
-              <option>Triceps</option>
-              <option>Core</option>
-              <option>Calves</option>
-              <option>Other</option>
-            </select>
-          </label>
-        </div>
-
-        <div class="number-grid">
-          <label>
-            Weight
-            <input id="weightInput" type="number" min="0" step="0.5" placeholder="kg" required />
-          </label>
-
-          <label>
-            Reps
-            <input id="repsInput" type="number" min="1" step="1" placeholder="reps" required />
-          </label>
-
-          <label>
-            RIR
-            <input id="rirInput" type="number" min="0" max="10" step="1" placeholder="0-4" />
-          </label>
-        </div>
-
-        <label>
-          Notes <span class="muted">optional</span>
-          <input id="notesInput" type="text" placeholder="e.g. paused reps, belt, pain-free" autocomplete="off" />
-        </label>
-
-        <button type="submit" class="primary-button">Save set</button>
-      </form>
-    </section>
-
-    <section id="stats" class="stats-grid"></section>
-
-    <section id="nutrition" class="card">
-      <div class="section-title">
-        <div>
-          <h2>Nutrition</h2>
-          <p class="muted">Daily meal-plan check-ins from Sunday to Thursday.</p>
-        </div>
-        <span id="nutritionBadge" class="badge"></span>
+      <div class="home-actions" aria-label="Main actions">
+        <button class="home-action-card nutrition-action" type="button" data-tab="nutrition">
+          <span class="home-icon">🍽️</span>
+          <span class="home-title">Nutrition</span>
+          <span class="home-subtitle">Daily meal-plan checks</span>
+        </button>
+        <button class="home-action-card log-action" type="button" data-tab="log">
+          <span class="home-icon">＋</span>
+          <span class="home-title">Add set</span>
+          <span class="home-subtitle">Weight, reps, RIR, routine</span>
+        </button>
+        <button class="home-action-card history-action" type="button" data-tab="history">
+          <span class="home-icon">📓</span>
+          <span class="home-title">Gym history</span>
+          <span class="home-subtitle">Today + full log</span>
+        </button>
+        <button class="home-action-card stats-action" type="button" data-tab="stats">
+          <span class="home-icon">📈</span>
+          <span class="home-title">Statistics</span>
+          <span class="home-subtitle">PRs, charts, weekly metrics</span>
+        </button>
       </div>
 
-      <div id="nutritionOverview" class="stats-grid nutrition-stats"></div>
-
-      <div class="toolbar nutrition-toolbar">
-        <button id="checkAllNutritionBtn" type="button" class="primary-button">Mark today complete</button>
-        <button id="clearNutritionBtn" type="button" class="secondary-button">Clear today</button>
-      </div>
-
-      <div id="nutritionMeals" class="nutrition-meals"></div>
-
-      <div class="nutrition-week-panel">
-        <div class="section-title stacked small-title">
+      <section class="card home-summary-card">
+        <div class="section-title stacked">
           <div>
-            <h3>Sunday–Thursday overview</h3>
-            <p class="muted">Your plan runs for five days. Friday and Saturday are outside this meal plan.</p>
+            <h2>Today snapshot</h2>
+            <p class="muted">Quick overview without opening every tab.</p>
           </div>
         </div>
-        <div id="nutritionWeek" class="nutrition-week-grid"></div>
-      </div>
+        <div id="homeSnapshot" class="stats-grid"></div>
+      </section>
 
-      <label class="nutrition-notes-label">
-        Nutrition notes <span class="muted">optional</span>
-        <textarea id="nutritionNotes" rows="3" placeholder="e.g. used oil, swapped fruit, felt hungry, missed snack"></textarea>
-      </label>
+      <section class="card home-summary-card">
+        <div class="section-title stacked">
+          <div>
+            <h2>Recent sets</h2>
+            <p class="muted">Your latest gym entries.</p>
+          </div>
+        </div>
+        <div id="homeRecentList" class="list compact-list"></div>
+      </section>
     </section>
 
-    <section id="routines" class="card">
-      <div class="section-title stacked">
-        <div>
-          <h2>Saved routines</h2>
-          <p class="muted">Create Push, Pull, Legs, Upper, Lower, or your own split.</p>
+    <section id="logPage" class="page" data-page="log">
+      <section id="log" class="card">
+        <div class="section-title">
+          <div>
+            <h2>Add set</h2>
+            <p class="muted">Register weight, reps, RIR and notes.</p>
+          </div>
         </div>
-      </div>
 
-      <form id="routineForm" class="form-grid compact-form">
-        <label>
-          Routine name
-          <input id="routineName" type="text" placeholder="e.g. Push Day" autocomplete="off" />
+        <form id="setForm" class="form-grid">
+          <label>
+            Routine <span class="muted">optional</span>
+            <select id="routineSelect"></select>
+          </label>
+
+          <label>
+            Exercise
+            <select id="exerciseSelect"></select>
+          </label>
+
+          <div class="two-grid">
+            <label>
+              New exercise <span class="muted">optional</span>
+              <input id="customExercise" type="text" placeholder="e.g. Hack Squat" autocomplete="off" />
+            </label>
+
+            <label>
+              Muscle for new exercise
+              <select id="muscleSelect">
+                <option>Chest</option>
+                <option>Back</option>
+                <option>Shoulders</option>
+                <option>Quads</option>
+                <option>Hamstrings</option>
+                <option>Glutes</option>
+                <option>Biceps</option>
+                <option>Triceps</option>
+                <option>Core</option>
+                <option>Calves</option>
+                <option>Other</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="number-grid">
+            <label>
+              Weight
+              <input id="weightInput" type="number" min="0" step="0.5" placeholder="kg" required />
+            </label>
+
+            <label>
+              Reps
+              <input id="repsInput" type="number" min="1" step="1" placeholder="reps" required />
+            </label>
+
+            <label>
+              RIR
+              <input id="rirInput" type="number" min="0" max="10" step="1" placeholder="0-4" />
+            </label>
+          </div>
+
+          <label>
+            Notes <span class="muted">optional</span>
+            <input id="notesInput" type="text" placeholder="e.g. paused reps, belt, pain-free" autocomplete="off" />
+          </label>
+
+          <button type="submit" class="primary-button">Save set</button>
+        </form>
+      </section>
+
+      <section id="routines" class="card">
+        <div class="section-title stacked">
+          <div>
+            <h2>Saved routines</h2>
+            <p class="muted">Create Push, Pull, Legs, Upper, Lower, or your own split.</p>
+          </div>
+        </div>
+
+        <form id="routineForm" class="form-grid compact-form">
+          <label>
+            Routine name
+            <input id="routineName" type="text" placeholder="e.g. Push Day" autocomplete="off" />
+          </label>
+
+          <label>
+            Exercises <span class="muted">one per line</span>
+            <textarea id="routineExercises" rows="5" placeholder="Bench Press&#10;Incline Bench&#10;Lateral Raise&#10;Triceps Pushdown"></textarea>
+          </label>
+
+          <div class="button-row">
+            <button type="submit" class="primary-button">Save routine</button>
+            <button id="clearRoutineForm" type="button" class="secondary-button">Clear</button>
+          </div>
+        </form>
+
+        <div id="routineList" class="routine-grid"></div>
+      </section>
+    </section>
+
+    <section id="nutritionPage" class="page" data-page="nutrition">
+      <section id="nutrition" class="card">
+        <div class="section-title">
+          <div>
+            <h2>Nutrition</h2>
+            <p class="muted">Daily meal-plan check-ins from Sunday to Thursday.</p>
+          </div>
+          <span id="nutritionBadge" class="badge"></span>
+        </div>
+
+        <div id="nutritionOverview" class="stats-grid nutrition-stats"></div>
+
+        <div class="toolbar nutrition-toolbar">
+          <button id="checkAllNutritionBtn" type="button" class="primary-button">Mark today complete</button>
+          <button id="clearNutritionBtn" type="button" class="secondary-button">Clear today</button>
+        </div>
+
+        <div id="nutritionMeals" class="nutrition-meals"></div>
+
+        <div class="nutrition-week-panel">
+          <div class="section-title stacked small-title">
+            <div>
+              <h3>Sunday–Thursday overview</h3>
+              <p class="muted">Your plan runs for five days. Friday and Saturday are outside this meal plan.</p>
+            </div>
+          </div>
+          <div id="nutritionWeek" class="nutrition-week-grid"></div>
+        </div>
+
+        <label class="nutrition-notes-label">
+          Nutrition notes <span class="muted">optional</span>
+          <textarea id="nutritionNotes" rows="3" placeholder="e.g. used oil, swapped fruit, felt hungry, missed snack"></textarea>
         </label>
-
-        <label>
-          Exercises <span class="muted">one per line</span>
-          <textarea id="routineExercises" rows="5" placeholder="Bench Press&#10;Incline Bench&#10;Lateral Raise&#10;Triceps Pushdown"></textarea>
-        </label>
-
-        <div class="button-row">
-          <button type="submit" class="primary-button">Save routine</button>
-          <button id="clearRoutineForm" type="button" class="secondary-button">Clear</button>
-        </div>
-      </form>
-
-      <div id="routineList" class="routine-grid"></div>
+      </section>
     </section>
 
-    <section id="weekly" class="card">
-      <div class="section-title stacked">
-        <div>
-          <h2>Weekly metrics</h2>
-          <p class="muted">Rolling last 7 days.</p>
+    <section id="historyPage" class="page" data-page="history">
+      <section class="card">
+        <div class="section-title">
+          <div>
+            <h2>Today</h2>
+            <p class="muted">Grouped by exercise.</p>
+          </div>
+          <span id="todayCount" class="badge"></span>
         </div>
-      </div>
-      <div id="weeklyMetrics" class="insight-grid"></div>
+        <div id="todayList" class="list"></div>
+      </section>
+
+      <section id="history" class="card">
+        <div class="section-title stacked">
+          <div>
+            <h2>Gym history</h2>
+            <p class="muted">Grouped by date, with daily volume and workout summaries.</p>
+          </div>
+        </div>
+
+        <div class="toolbar">
+          <select id="filterExercise"></select>
+          <button id="exportBtn" type="button" class="secondary-button">Export JSON</button>
+          <label class="secondary-button import-label">
+            Import JSON
+            <input id="importFile" type="file" accept="application/json,.json" hidden />
+          </label>
+        </div>
+
+        <div id="historyList" class="list"></div>
+      </section>
     </section>
 
-    <section id="progress" class="card">
-      <div class="section-title stacked">
-        <div>
-          <h2>Progress dashboard</h2>
-          <p class="muted">PRs, charts and estimated 1RM by exercise.</p>
+    <section id="statsPage" class="page" data-page="stats">
+      <section class="stats-overview">
+        <div id="stats" class="stats-grid"></div>
+      </section>
+
+      <section id="weekly" class="card">
+        <div class="section-title stacked">
+          <div>
+            <h2>Weekly metrics</h2>
+            <p class="muted">Rolling last 7 days.</p>
+          </div>
         </div>
-      </div>
+        <div id="weeklyMetrics" class="insight-grid"></div>
+      </section>
 
-      <div class="toolbar progress-toolbar">
-        <select id="progressExercise"></select>
-        <select id="chartMetric">
-          <option value="e1rm">Estimated 1RM</option>
-          <option value="weight">Top weight</option>
-          <option value="volume">Daily volume</option>
-        </select>
-      </div>
+      <section id="progress" class="card">
+        <div class="section-title stacked">
+          <div>
+            <h2>Progress dashboard</h2>
+            <p class="muted">PRs, charts and estimated 1RM by exercise.</p>
+          </div>
+        </div>
 
-      <div id="prBoard" class="pr-grid"></div>
+        <div class="toolbar progress-toolbar">
+          <select id="progressExercise"></select>
+          <select id="chartMetric">
+            <option value="e1rm">Estimated 1RM</option>
+            <option value="weight">Top weight</option>
+            <option value="volume">Daily volume</option>
+          </select>
+        </div>
 
-      <div class="chart-wrap">
-        <canvas id="progressChart" width="900" height="380" aria-label="Progress chart"></canvas>
-      </div>
+        <div id="prBoard" class="pr-grid"></div>
+
+        <div class="chart-wrap">
+          <canvas id="progressChart" width="900" height="380" aria-label="Progress chart"></canvas>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="section-title stacked">
+          <div>
+            <h2>1RM calculator</h2>
+            <p class="muted">Uses the Epley formula: weight × (1 + reps / 30).</p>
+          </div>
+        </div>
+
+        <form id="oneRmForm" class="calculator-grid">
+          <label>
+            Weight
+            <input id="calcWeight" type="number" min="0" step="0.5" placeholder="kg" />
+          </label>
+          <label>
+            Reps
+            <input id="calcReps" type="number" min="1" step="1" placeholder="reps" />
+          </label>
+          <output id="oneRmResult" class="result-box">Estimated 1RM: —</output>
+        </form>
+        <div id="percentageTable" class="percentage-grid"></div>
+      </section>
     </section>
 
-    <section class="card">
-      <div class="section-title stacked">
-        <div>
-          <h2>1RM calculator</h2>
-          <p class="muted">Uses the Epley formula: weight × (1 + reps / 30).</p>
-        </div>
-      </div>
-
-      <form id="oneRmForm" class="calculator-grid">
-        <label>
-          Weight
-          <input id="calcWeight" type="number" min="0" step="0.5" placeholder="kg" />
-        </label>
-        <label>
-          Reps
-          <input id="calcReps" type="number" min="1" step="1" placeholder="reps" />
-        </label>
-        <output id="oneRmResult" class="result-box">Estimated 1RM: —</output>
-      </form>
-      <div id="percentageTable" class="percentage-grid"></div>
-    </section>
-
-    <section class="card">
-      <div class="section-title">
-        <div>
-          <h2>Today</h2>
-          <p class="muted">Grouped by exercise.</p>
-        </div>
-        <span id="todayCount" class="badge"></span>
-      </div>
-      <div id="todayList" class="list"></div>
-    </section>
-
-    <section id="history" class="card">
-      <div class="section-title stacked">
-        <div>
-          <h2>History</h2>
-          <p class="muted">Grouped by date, with daily volume and workout summaries.</p>
-        </div>
-      </div>
-
-      <div class="toolbar">
-        <select id="filterExercise"></select>
-        <button id="exportBtn" type="button" class="secondary-button">Export JSON</button>
-        <label class="secondary-button import-label">
-          Import JSON
-          <input id="importFile" type="file" accept="application/json,.json" hidden />
-        </label>
-      </div>
-
-      <div id="historyList" class="list"></div>
-    </section>
+    <nav class="bottom-nav" aria-label="LiftLog tabs">
+      <button type="button" class="tab-button active" data-tab="main"><span>⌂</span>Main</button>
+      <button type="button" class="tab-button" data-tab="nutrition"><span>🍽️</span>Nutrition</button>
+      <button type="button" class="tab-button" data-tab="log"><span>＋</span>Add Set</button>
+      <button type="button" class="tab-button" data-tab="history"><span>📓</span>History</button>
+      <button type="button" class="tab-button" data-tab="stats"><span>📈</span>Stats</button>
+    </nav>
   </main>
 
   <script src="app.js"></script>

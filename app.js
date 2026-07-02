@@ -176,7 +176,11 @@ const els = {
   nutritionWeek: document.getElementById("nutritionWeek"),
   nutritionNotes: document.getElementById("nutritionNotes"),
   checkAllNutritionBtn: document.getElementById("checkAllNutritionBtn"),
-  clearNutritionBtn: document.getElementById("clearNutritionBtn")
+  clearNutritionBtn: document.getElementById("clearNutritionBtn"),
+  pageViews: document.querySelectorAll("[data-page]"),
+  tabButtons: document.querySelectorAll("[data-tab]"),
+  homeSnapshot: document.getElementById("homeSnapshot"),
+  homeRecentList: document.getElementById("homeRecentList")
 };
 
 function loadArray(key) {
@@ -1015,6 +1019,8 @@ function addSet(event) {
   els.routineSelect.value = keepRoutine;
   els.exerciseSelect.value = exercise;
   render();
+setActiveTab(getInitialTab(), false);
+window.addEventListener("hashchange", () => setActiveTab(getInitialTab(), false));
 }
 
 function saveRoutine(event) {
@@ -1048,6 +1054,8 @@ function saveRoutine(event) {
   saveExerciseMeta();
   els.routineForm.reset();
   render();
+setActiveTab(getInitialTab(), false);
+window.addEventListener("hashchange", () => setActiveTab(getInitialTab(), false));
 }
 
 function useRoutine(id) {
@@ -1069,6 +1077,8 @@ function deleteRoutine(id) {
   routines = routines.filter(item => item.id !== id);
   saveRoutines();
   render();
+setActiveTab(getInitialTab(), false);
+window.addEventListener("hashchange", () => setActiveTab(getInitialTab(), false));
 }
 
 function deleteSet(id) {
@@ -1078,6 +1088,8 @@ function deleteSet(id) {
   sets = sets.filter(set => set.id !== id);
   saveSets();
   render();
+setActiveTab(getInitialTab(), false);
+window.addEventListener("hashchange", () => setActiveTab(getInitialTab(), false));
 }
 
 function exportBackup() {
@@ -1152,6 +1164,8 @@ function importBackup(event) {
       saveRoutines();
       saveExerciseMeta();
       render();
+setActiveTab(getInitialTab(), false);
+window.addEventListener("hashchange", () => setActiveTab(getInitialTab(), false));
       alert(`Imported ${cleanedSets.length} sets and ${cleanedRoutines.length} routines.`);
     } catch (error) {
       alert("Could not import this file. Make sure it is a LiftLog JSON backup.");
@@ -1160,6 +1174,102 @@ function importBackup(event) {
     }
   };
   reader.readAsText(file);
+}
+
+
+function normalizeTab(tab) {
+  const validTabs = new Set(["main", "nutrition", "log", "history", "stats"]);
+  return validTabs.has(tab) ? tab : "main";
+}
+
+function getInitialTab() {
+  const hash = window.location.hash.replace("#", "").trim();
+  const aliases = {
+    home: "main",
+    main: "main",
+    nutrition: "nutrition",
+    log: "log",
+    add: "log",
+    addset: "log",
+    history: "history",
+    stats: "stats",
+    statistics: "stats",
+    progress: "stats"
+  };
+  return normalizeTab(aliases[hash] || hash || "main");
+}
+
+function setActiveTab(tab = "main", updateHash = true) {
+  const activeTab = normalizeTab(tab);
+
+  els.pageViews.forEach(view => {
+    view.classList.toggle("active", view.dataset.page === activeTab);
+  });
+
+  els.tabButtons.forEach(button => {
+    button.classList.toggle("active", button.dataset.tab === activeTab);
+  });
+
+  document.body.dataset.activeTab = activeTab;
+
+  if (updateHash) {
+    const nextHash = activeTab === "main" ? "#main" : `#${activeTab}`;
+    if (window.location.hash !== nextHash) history.replaceState(null, "", nextHash);
+    window.scrollTo(0, 0);
+  }
+
+  if (activeTab === "stats") {
+    requestAnimationFrame(renderProgress);
+  }
+}
+
+function renderHome() {
+  if (!els.homeSnapshot || !els.homeRecentList) return;
+
+  const today = localDateString();
+  const todaySets = sets.filter(set => set.date === today);
+  const weeklySets = getRollingWeekSets();
+  const weeklyVolume = weeklySets.reduce((sum, set) => sum + setVolume(set), 0);
+  const nutritionCompletion = getNutritionCompletion(today);
+  const bestSet = getBestSet(sets, set => estimatedOneRepMax(set.weight, set.reps));
+
+  const cards = [
+    { label: "Gym today", value: `${todaySets.length}`, extra: "sets logged" },
+    { label: "Nutrition", value: `${nutritionCompletion.percent}%`, extra: `${nutritionCompletion.checked}/${nutritionCompletion.total} checks today` },
+    { label: "7-day volume", value: `${formatNumber(weeklyVolume)} kg`, extra: `${weeklySets.length} sets this week` },
+    {
+      label: "Best e1RM",
+      value: bestSet ? `${formatNumber(estimatedOneRepMax(bestSet.weight, bestSet.reps), 1)} kg` : "—",
+      extra: bestSet ? bestSet.exercise : "log a set first"
+    }
+  ];
+
+  els.homeSnapshot.innerHTML = cards.map(card => `
+    <article class="stat-card">
+      <div class="stat-label">${escapeHTML(card.label)}</div>
+      <div class="stat-value">${escapeHTML(card.value)}</div>
+      <div class="stat-extra">${escapeHTML(card.extra)}</div>
+    </article>
+  `).join("");
+
+  const recentSets = [...sets].sort((a, b) => b.timestamp - a.timestamp).slice(0, 4);
+  if (recentSets.length === 0) {
+    els.homeRecentList.innerHTML = `<div class="empty-state">No sets logged yet. Tap <strong>Add set</strong> to start.</div>`;
+    return;
+  }
+
+  els.homeRecentList.innerHTML = recentSets.map(set => `
+    <div class="set-row">
+      <div>
+        <strong>${escapeHTML(set.exercise)}</strong>
+        <div class="muted">${escapeHTML(formatShortDate(set.date))}${set.routineName ? ` · ${escapeHTML(set.routineName)}` : ""}</div>
+      </div>
+      <div class="set-meta">
+        <span>${formatNumber(set.weight, 1)} kg × ${set.reps}</span>
+        <span>e1RM ${formatNumber(estimatedOneRepMax(set.weight, set.reps), 1)} kg</span>
+      </div>
+    </div>
+  `).join("");
 }
 
 function render() {
@@ -1171,6 +1281,7 @@ function render() {
   renderWeeklyMetrics();
   renderProgress();
   renderTodayAndHistory();
+  renderHome();
   updateOneRmCalculator();
 }
 
@@ -1204,6 +1315,13 @@ document.addEventListener("change", event => {
 });
 
 document.addEventListener("click", event => {
+  const tabButton = event.target.closest("[data-tab]");
+  if (tabButton) {
+    event.preventDefault();
+    setActiveTab(tabButton.dataset.tab);
+    return;
+  }
+
   const deleteButton = event.target.closest("[data-delete-id]");
   if (deleteButton) deleteSet(deleteButton.dataset.deleteId);
 
@@ -1230,3 +1348,5 @@ if ("serviceWorker" in navigator) {
 }
 
 render();
+setActiveTab(getInitialTab(), false);
+window.addEventListener("hashchange", () => setActiveTab(getInitialTab(), false));
